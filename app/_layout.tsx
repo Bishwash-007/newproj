@@ -4,6 +4,7 @@ import { useCustomFonts } from "@/hooks/useCustomFonts";
 import { useEffect } from "react";
 
 import "../global.css";
+import { View } from "react-native";
 
 export default function RootLayout() {
   const [loaded, error] = useCustomFonts();
@@ -16,10 +17,12 @@ export default function RootLayout() {
   if (!loaded && !error) return null;
 
   return (
-    <Stack screenOptions={{ headerShown: false }} initialRouteName="index">
-      <Stack.Screen name="index" />
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(root)" />
-    </Stack>
+    <View className="flex-1 bg-white dark:bg-black">
+      <Stack screenOptions={{ headerShown: false }} initialRouteName="index">
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(root)" />
+      </Stack>
+    </View>
   );
 }

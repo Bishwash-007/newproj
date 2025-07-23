@@ -11,6 +11,7 @@ import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import OAuthButton from "@/components/ui/OAuth";
 import { useAuthStore } from "@/hooks/useAuthStore";
+import Divider from "@/components/ui/Divider";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -103,12 +104,12 @@ const SignUp = () => {
 
   return (
     <Animated.View
-      className={"flex-1 h-full px-6 bg-white"}
+      className={"flex-1 h-full px-6 bg-white dark:bg-black"}
       style={[animatedStyles]}
     >
       <View className="flex-1 justify-center items-center py-8 px-6">
         <Text className="font-poppinsSemibold text-3xl text-muted-800 dark:text-muted-100 mb-8 text-center">
-          NightCall
+          {"Sign Up"}
         </Text>
 
         <View className="w-full space-y-5 mb-6">
@@ -122,8 +123,10 @@ const SignUp = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
-          {fullNameError !== "" && (
-            <Text className="text-red-500 text-xs mt-1">{fullNameError}</Text>
+          {fullNameError && (
+            <Text className="text-red-400 text-xs font-poppinsLight ml-2">
+              {fullNameError}
+            </Text>
           )}
 
           <InputField
@@ -138,8 +141,10 @@ const SignUp = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
-          {emailError !== "" && (
-            <Text className="text-red-500 text-xs mt-1">{emailError}</Text>
+          {emailError && (
+            <Text className="text-red-400 text-xs font-poppinsLight ml-2">
+              {emailError}
+            </Text>
           )}
 
           <InputField
@@ -153,8 +158,8 @@ const SignUp = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
-          {phoneNumberError !== "" && (
-            <Text className="text-red-500 text-xs mt-1">
+          {phoneNumberError && (
+            <Text className="text-red-400 text-xs font-poppinsLight ml-2">
               {phoneNumberError}
             </Text>
           )}
@@ -183,8 +188,10 @@ const SignUp = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
-          {passwordError !== "" && (
-            <Text className="text-red-500 text-xs mt-1">{passwordError}</Text>
+          {passwordError && (
+            <Text className="text-red-400 text-xs font-poppinsLight ml-2">
+              {passwordError}
+            </Text>
           )}
         </View>
 
@@ -201,13 +208,7 @@ const SignUp = () => {
         </Link>
 
         {/* Separator */}
-        <View className="w-full flex-row items-center justify-center gap-3 my-6">
-          <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
-          <Text className="text-sm text-muted-500 dark:text-muted-400 font-poppinsLight">
-            or
-          </Text>
-          <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
-        </View>
+        <Divider />
 
         {/* OAuth Buttons */}
         <View className="flex-row w-full justify-center gap-4">

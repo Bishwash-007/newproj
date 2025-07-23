@@ -10,6 +10,7 @@ import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import OAuthButton from "@/components/ui/OAuth";
 import { useAuthStore } from "@/hooks/useAuthStore";
+import Divider from "@/components/ui/Divider";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -69,7 +70,7 @@ const SignIn = () => {
 
   return (
     <Animated.View
-      className="flex-1 h-full px-6 bg-white"
+      className="flex-1 h-full px-6 bg-white dark:bg-black"
       style={[animatedStyles]}
     >
       <View className="flex-1 w-full px-6 justify-center items-center bg-muted-50 dark:bg-black">
@@ -83,18 +84,17 @@ const SignIn = () => {
             label="Email"
             placeholder="you@example.com"
             value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              if (emailError) setEmailError("");
-            }}
+            onChangeText={setEmail}
             iconLeft={
               <Ionicons name="person-outline" size={20} color="#737373" />
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
-          {emailError ? (
-            <Text className="text-red-500 text-sm mt-1 ml-1">{emailError}</Text>
-          ) : null}
+          {emailError && (
+            <Text className="text-red-400 text-xs font-poppinsLight ml-2">
+              {emailError}
+            </Text>
+          )}
 
           {/* Password Field */}
           <InputField
@@ -102,10 +102,7 @@ const SignIn = () => {
             placeholder="Your password"
             secureTextEntry={!showPassword}
             value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              if (passwordError) setPasswordError("");
-            }}
+            onChangeText={setPassword}
             iconLeft={
               <Ionicons name="lock-closed-outline" size={20} color="#737373" />
             }
@@ -119,11 +116,11 @@ const SignIn = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
-          {passwordError ? (
-            <Text className="text-red-500 text-sm mt-1 ml-1">
+          {passwordError && (
+            <Text className="text-red-400 text-xs font-poppinsLight ml-2">
               {passwordError}
             </Text>
-          ) : null}
+          )}
         </Animated.View>
 
         {/* Sign In Button */}
@@ -141,14 +138,7 @@ const SignIn = () => {
           </Text>
         </Link>
 
-        {/* Divider */}
-        <View className="w-full flex-row items-center justify-center gap-3 my-6">
-          <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
-          <Text className="text-sm text-muted-500 dark:text-muted-400 font-poppinsLight">
-            or
-          </Text>
-          <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
-        </View>
+        <Divider />
 
         {/* OAuth */}
         <View className="flex-row w-full justify-center gap-4">

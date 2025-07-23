@@ -23,9 +23,9 @@ const InputField: React.FC<Props> = ({
   const [visible, setVisible] = React.useState(!secureTextEntry);
 
   return (
-    <View className="flex mb-4">
+    <View className="flex mb-1 mt-2">
       {label && (
-        <Text className="ml-2 font-poppinsSemibold text-lg text-muted-light dark:text-muted-dark mb-1">
+        <Text className="ml-2 font-poppins text-lg text-muted-light dark:text-muted-dark mb-1">
           {label}
         </Text>
       )}
