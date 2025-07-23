@@ -13,9 +13,10 @@ import { useAuthStore } from "@/hooks/useAuthStore";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const { email, password, setEmail, setPassword, login } = useAuthStore();
-
   const router = useRouter();
   const keyboard = useAnimatedKeyboard();
 
@@ -24,30 +25,38 @@ const SignIn = () => {
   }));
 
   const validateForm = (): boolean => {
-    if (!email || !password) {
-      console.warn("Both fields are required.");
-      return false;
+    let valid = true;
+
+    setEmailError("");
+    setPasswordError("");
+
+    if (!email) {
+      setEmailError("Email is required.");
+      valid = false;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setEmailError("Please enter a valid email.");
+        valid = false;
+      }
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      console.warn("Enter a valid email.");
-      return false;
+    if (!password) {
+      setPasswordError("Password is required.");
+      valid = false;
+    } else if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      valid = false;
     }
 
-    if (password.length < 6) {
-      console.warn("Password must be longer than 6 characters.");
-      return false;
-    }
-
-    return true;
+    return valid;
   };
 
   const handleSignIn = async () => {
     if (!validateForm()) return;
 
     try {
-      // await logIn({ email, password });
+      await login(email, password);
       router.replace("/");
     } catch (err) {
       console.error("Sign in failed:", err);
@@ -65,29 +74,38 @@ const SignIn = () => {
     >
       <View className="flex-1 w-full px-6 justify-center items-center bg-muted-50 dark:bg-black">
         <Text className="font-poppinsSemibold text-3xl text-muted-800 dark:text-muted-100 mb-8 text-center">
-          {"title"}
+          Sign In
         </Text>
 
-        <Animated.View className="w-full space-y-5 mb-6">
-          {/* Username */}
+        <Animated.View className="w-full space-y-2 mb-6">
+          {/* Email Field */}
           <InputField
             label="Email"
-            placeholder="yourname"
+            placeholder="you@example.com"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (emailError) setEmailError("");
+            }}
             iconLeft={
               <Ionicons name="person-outline" size={20} color="#737373" />
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
+          {emailError ? (
+            <Text className="text-red-500 text-sm mt-1 ml-1">{emailError}</Text>
+          ) : null}
 
-          {/* Password */}
+          {/* Password Field */}
           <InputField
             label="Password"
             placeholder="Your password"
             secureTextEntry={!showPassword}
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) => {
+              setPassword(text);
+              if (passwordError) setPasswordError("");
+            }}
             iconLeft={
               <Ionicons name="lock-closed-outline" size={20} color="#737373" />
             }
@@ -101,6 +119,11 @@ const SignIn = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
+          {passwordError ? (
+            <Text className="text-red-500 text-sm mt-1 ml-1">
+              {passwordError}
+            </Text>
+          ) : null}
         </Animated.View>
 
         {/* Sign In Button */}
@@ -110,15 +133,15 @@ const SignIn = () => {
           onPress={handleSignIn}
         />
 
-        {/* Sign In Redirect */}
+        {/* Redirect to Sign Up */}
         <Link href="/sign-up" asChild>
           <Text className="mt-4 font-poppins text-sm text-muted-500 dark:text-muted-400">
             Don&apos;t have an account?
-            <Text className="underline"> SignUp</Text>
+            <Text className="underline"> Sign up</Text>
           </Text>
         </Link>
 
-        {/* Separator */}
+        {/* Divider */}
         <View className="w-full flex-row items-center justify-center gap-3 my-6">
           <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
           <Text className="text-sm text-muted-500 dark:text-muted-400 font-poppinsLight">
@@ -127,6 +150,7 @@ const SignIn = () => {
           <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
         </View>
 
+        {/* OAuth */}
         <View className="flex-row w-full justify-center gap-4">
           <OAuthButton
             iconName="google"

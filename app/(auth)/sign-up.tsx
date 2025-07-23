@@ -14,6 +14,10 @@ import { useAuthStore } from "@/hooks/useAuthStore";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [fullNameError, setFullNameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
 
   const {
     email,
@@ -31,32 +35,54 @@ const SignUp = () => {
   const keyboard = useAnimatedKeyboard();
 
   const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{ translateY: -keyboard.height.value/5 }],
+    transform: [{ translateY: -keyboard.height.value / 5 }],
   }));
 
   const validateForm = (): boolean => {
-    if (!email || !fullName || !password || !phoneNumber) {
-      console.warn("All fields are required.");
-      return false;
+    let valid = true;
+
+    setEmailError("");
+    setFullNameError("");
+    setPasswordError("");
+    setPhoneNumberError("");
+
+    if (!email) {
+      setEmailError("Email is required.");
+      valid = false;
+    }
+
+    if (!fullName) {
+      setFullNameError("Full name is required.");
+      valid = false;
+    }
+
+    if (!password) {
+      setPasswordError("Password is required.");
+      valid = false;
+    }
+
+    if (!phoneNumber) {
+      setPhoneNumberError("Phone number is required.");
+      valid = false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      console.warn("Enter a valid email.");
-      return false;
+    if (email && !emailRegex.test(email)) {
+      setEmailError("Enter a valid email address.");
+      valid = false;
     }
 
-    if (password.length < 6) {
-      console.warn("Password must be longer than 6 characters.");
-      return false;
+    if (password && password.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      valid = false;
     }
 
-    if (!/^\d{10}$/.test(phoneNumber)) {
-      console.warn("Enter a valid 10-digit phone number.");
-      return false;
+    if (phoneNumber && !/^\d{10}$/.test(phoneNumber)) {
+      setPhoneNumberError("Enter a valid 10-digit phone number.");
+      valid = false;
     }
 
-    return true;
+    return valid;
   };
 
   const handleSignUp = async () => {
@@ -95,6 +121,9 @@ const SignUp = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
+          {fullNameError !== "" && (
+            <Text className="text-red-500 text-xs mt-1">{fullNameError}</Text>
+          )}
 
           <InputField
             label="Email"
@@ -108,6 +137,9 @@ const SignUp = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
+          {emailError !== "" && (
+            <Text className="text-red-500 text-xs mt-1">{emailError}</Text>
+          )}
 
           <InputField
             label="Phone Number"
@@ -120,6 +152,11 @@ const SignUp = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
+          {phoneNumberError !== "" && (
+            <Text className="text-red-500 text-xs mt-1">
+              {phoneNumberError}
+            </Text>
+          )}
 
           <InputField
             label="Password"
@@ -145,6 +182,9 @@ const SignUp = () => {
             }
             className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
           />
+          {passwordError !== "" && (
+            <Text className="text-red-500 text-xs mt-1">{passwordError}</Text>
+          )}
         </View>
 
         <Button
