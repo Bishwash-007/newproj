@@ -31,7 +31,7 @@ const InputField: React.FC<Props> = ({
       )}
 
       <View
-        className={`flex-row items-center px-2 bg-white dark:bg-black border border-muted-300 dark:border-muted-800 rounded-xl ${className}`}
+        className={`flex-row items-center justify-between px-2 bg-white dark:bg-black border border-muted-300 dark:border-muted-800 rounded-xl ${className}`}
       >
         {iconLeft && <View className="ml-3 mr-2">{iconLeft}</View>}
 
