@@ -5,12 +5,11 @@ export default function AuthLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        gestureEnabled: true,
-        gestureDirection: "horizontal",
       }}
     >
       <Stack.Screen name="sign-in" />
       <Stack.Screen name="sign-up" />
+      <Stack.Screen name="verify-otp" />
     </Stack>
   );
 }
