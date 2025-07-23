@@ -90,6 +90,7 @@ const SignUp = () => {
 
     try {
       await register(fullName, email, password, phoneNumber);
+
       router.push("/verify-otp");
     } catch (err) {
       console.error("Sign up failed:", err);
