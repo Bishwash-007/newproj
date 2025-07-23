@@ -1,30 +1,41 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-} from "react-native";
+import { View, Text, TouchableWithoutFeedback } from "react-native";
+import Animated, {
+  useAnimatedKeyboard,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { Link, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import OAuthButton from "@/components/ui/OAuth";
+import { useAuthStore } from "@/hooks/useAuthStore";
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const {
+    email,
+    fullName,
+    password,
+    phoneNumber,
+    setEmail,
+    setFullName,
+    setPassword,
+    setPhoneNumber,
+    register,
+  } = useAuthStore();
+
   const router = useRouter();
+  const keyboard = useAnimatedKeyboard();
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ translateY: -keyboard.height.value/5 }],
+  }));
 
   const validateForm = (): boolean => {
-    if (!email || !fullName || !password) {
+    if (!email || !fullName || !password || !phoneNumber) {
       console.warn("All fields are required.");
       return false;
     }
@@ -40,6 +51,11 @@ const SignUp = () => {
       return false;
     }
 
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      console.warn("Enter a valid 10-digit phone number.");
+      return false;
+    }
+
     return true;
   };
 
@@ -47,8 +63,8 @@ const SignUp = () => {
     if (!validateForm()) return;
 
     try {
-      // await signUp({ email, password, fullName });
-      router.replace("/");
+      await register(fullName, email, password, phoneNumber);
+      router.push("/verify-otp");
     } catch (err) {
       console.error("Sign up failed:", err);
     }
@@ -56,127 +72,119 @@ const SignUp = () => {
 
   const handleOAuth = (provider: string) => {
     console.log(`Signing in with ${provider}`);
-    // You can add OAuth logic here later
   };
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1"
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : -30}
+    <Animated.View
+      className={"flex-1 h-full px-6 bg-white"}
+      style={[animatedStyles]}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: "center",
-            paddingHorizontal: 18,
-          }}
-          className="bg-muted-50 dark:bg-black px-6"
-        >
-          <View className="flex-1 justify-center items-center py-8">
-            <Text className="font-poppinsSemibold text-3xl text-muted-800 dark:text-muted-100 mb-8 text-center">
-              NightCall
-            </Text>
+      <View className="flex-1 justify-center items-center py-8 px-6">
+        <Text className="font-poppinsSemibold text-3xl text-muted-800 dark:text-muted-100 mb-8 text-center">
+          NightCall
+        </Text>
 
-            <View className="w-full space-y-5 mb-6">
-              <InputField
-                label="fullName"
-                placeholder="yourname"
-                value={fullName}
-                onChangeText={setFullName}
-                iconLeft={
-                  <Ionicons name="person-outline" size={20} color="#737373" />
-                }
-                className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
-              />
+        <View className="w-full space-y-5 mb-6">
+          <InputField
+            label="fullName"
+            placeholder="yourname"
+            value={fullName}
+            onChangeText={setFullName}
+            iconLeft={
+              <Ionicons name="person-outline" size={20} color="#737373" />
+            }
+            className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
+          />
 
-              <InputField
-                label="Email"
-                placeholder="you@example.com"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-                iconLeft={
-                  <Ionicons name="mail-outline" size={20} color="#737373" />
-                }
-                className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
-              />
+          <InputField
+            label="Email"
+            placeholder="you@example.com"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+            iconLeft={
+              <Ionicons name="mail-outline" size={20} color="#737373" />
+            }
+            className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
+          />
 
-              <InputField
-                label="Password"
-                placeholder="Your password"
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-                iconLeft={
+          <InputField
+            label="Phone Number"
+            placeholder="98XXXXXXXX"
+            keyboardType="phone-pad"
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+            iconLeft={
+              <Ionicons name="call-outline" size={20} color="#737373" />
+            }
+            className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
+          />
+
+          <InputField
+            label="Password"
+            placeholder="Your password"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
+            iconLeft={
+              <Ionicons name="lock-closed-outline" size={20} color="#737373" />
+            }
+            iconRight={
+              <TouchableWithoutFeedback
+                onPress={() => setShowPassword((prev) => !prev)}
+              >
+                <View>
                   <Ionicons
-                    name="lock-closed-outline"
+                    name={showPassword ? "eye-off-outline" : "eye-outline"}
                     size={20}
                     color="#737373"
                   />
-                }
-                iconRight={
-                  <TouchableWithoutFeedback
-                    onPress={() => setShowPassword((prev) => !prev)}
-                  >
-                    <View>
-                      <Ionicons
-                        name={showPassword ? "eye-off-outline" : "eye-outline"}
-                        size={20}
-                        color="#737373"
-                      />
-                    </View>
-                  </TouchableWithoutFeedback>
-                }
-                className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
-              />
-            </View>
+                </View>
+              </TouchableWithoutFeedback>
+            }
+            className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
+          />
+        </View>
 
-            <Button
-              title="Sign Up"
-              onPress={handleSignUp}
-              className="w-full bg-muted-800 dark:bg-muted-200"
-            />
+        <Button
+          title="Sign Up"
+          onPress={handleSignUp}
+          className="w-full bg-muted-800 dark:bg-muted-200"
+        />
 
-            <Link href="/" asChild>
-              <Text className="mt-4 font-poppins text-sm text-muted-500 dark:text-muted-400 text-center">
-                Already have an account?{" "}
-                <Text className="underline">Sign In</Text>
-              </Text>
-            </Link>
+        <Link href="/sign-in" asChild>
+          <Text className="mt-4 font-poppins text-sm text-muted-500 dark:text-muted-400 text-center">
+            Already have an account? <Text className="underline">Sign In</Text>
+          </Text>
+        </Link>
 
-            {/* Separator */}
-            <View className="w-full flex-row items-center justify-center gap-3 my-6">
-              <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
-              <Text className="text-sm text-muted-500 dark:text-muted-400 font-poppinsLight">
-                or
-              </Text>
-              <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
-            </View>
+        {/* Separator */}
+        <View className="w-full flex-row items-center justify-center gap-3 my-6">
+          <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
+          <Text className="text-sm text-muted-500 dark:text-muted-400 font-poppinsLight">
+            or
+          </Text>
+          <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
+        </View>
 
-            {/* OAuth Buttons */}
-            <View className="flex-row w-full justify-center gap-4">
-              <OAuthButton
-                iconName="google"
-                onPress={() => handleOAuth("google")}
-              />
-              <OAuthButton
-                iconName="github"
-                onPress={() => handleOAuth("github")}
-              />
-              <OAuthButton
-                iconName="facebook"
-                onPress={() => handleOAuth("facebook")}
-              />
-            </View>
-          </View>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        {/* OAuth Buttons */}
+        <View className="flex-row w-full justify-center gap-4">
+          <OAuthButton
+            iconName="google"
+            onPress={() => handleOAuth("google")}
+          />
+          <OAuthButton
+            iconName="github"
+            onPress={() => handleOAuth("github")}
+          />
+          <OAuthButton
+            iconName="facebook"
+            onPress={() => handleOAuth("facebook")}
+          />
+        </View>
+      </View>
+    </Animated.View>
   );
 };
 

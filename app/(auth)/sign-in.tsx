@@ -1,25 +1,27 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-  TouchableWithoutFeedback,
-  ScrollView,
-} from "react-native";
+import { View, Text } from "react-native";
+import Animated, {
+  useAnimatedKeyboard,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { Link, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import OAuthButton from "@/components/ui/OAuth";
+import { useAuthStore } from "@/hooks/useAuthStore";
 
 const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const { email, password, setEmail, setPassword, login } = useAuthStore();
+
   const router = useRouter();
+  const keyboard = useAnimatedKeyboard();
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ translateY: -keyboard.height.value / 20 }],
+  }));
 
   const validateForm = (): boolean => {
     if (!email || !password) {
@@ -57,79 +59,90 @@ const SignIn = () => {
   };
 
   return (
-    <View className="flex-1 w-full px-6 justify-center items-center bg-muted-50 dark:bg-black">
-      <Text className="font-poppinsSemibold text-3xl text-muted-800 dark:text-muted-100 mb-8 text-center">
-        {"title"}
-      </Text>
-
-      <View className="w-full space-y-5 mb-6">
-        {/* Username */}
-        <InputField
-          label="Email"
-          placeholder="yourname"
-          value={email}
-          onChangeText={setEmail}
-          iconLeft={
-            <Ionicons name="person-outline" size={20} color="#737373" />
-          }
-          className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
-        />
-
-        {/* Password */}
-        <InputField
-          label="Password"
-          placeholder="Your password"
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
-          iconLeft={
-            <Ionicons name="lock-closed-outline" size={20} color="#737373" />
-          }
-          iconRight={
-            <Ionicons
-              name={showPassword ? "eye-off-outline" : "eye-outline"}
-              size={20}
-              color="#737373"
-              onPress={() => setShowPassword((prev) => !prev)}
-            />
-          }
-          className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
-        />
-      </View>
-
-      {/* Sign In Button */}
-      <Button
-        title="Sign In"
-        className="w-full bg-muted-800 dark:bg-muted-200"
-        onPress={handleSignIn}
-      />
-
-      {/* Sign In Redirect */}
-      <Link href="/" asChild>
-        <Text className="mt-4 font-poppins text-sm text-muted-500 dark:text-muted-400">
-          Don&apos;t have an account?
-          <Text className="underline"> SignUp</Text>
+    <Animated.View
+      className="flex-1 h-full px-6 bg-white"
+      style={[animatedStyles]}
+    >
+      <View className="flex-1 w-full px-6 justify-center items-center bg-muted-50 dark:bg-black">
+        <Text className="font-poppinsSemibold text-3xl text-muted-800 dark:text-muted-100 mb-8 text-center">
+          {"title"}
         </Text>
-      </Link>
 
-      {/* Separator */}
-      <View className="w-full flex-row items-center justify-center gap-3 my-6">
-        <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
-        <Text className="text-sm text-muted-500 dark:text-muted-400 font-poppinsLight">
-          or
-        </Text>
-        <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
-      </View>
+        <Animated.View className="w-full space-y-5 mb-6">
+          {/* Username */}
+          <InputField
+            label="Email"
+            placeholder="yourname"
+            value={email}
+            onChangeText={setEmail}
+            iconLeft={
+              <Ionicons name="person-outline" size={20} color="#737373" />
+            }
+            className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
+          />
 
-      <View className="flex-row w-full justify-center gap-4">
-        <OAuthButton iconName="google" onPress={() => handleOAuth("google")} />
-        <OAuthButton iconName="github" onPress={() => handleOAuth("github")} />
-        <OAuthButton
-          iconName="facebook"
-          onPress={() => handleOAuth("facebook")}
+          {/* Password */}
+          <InputField
+            label="Password"
+            placeholder="Your password"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
+            iconLeft={
+              <Ionicons name="lock-closed-outline" size={20} color="#737373" />
+            }
+            iconRight={
+              <Ionicons
+                name={showPassword ? "eye-off-outline" : "eye-outline"}
+                size={20}
+                color="#737373"
+                onPress={() => setShowPassword((prev) => !prev)}
+              />
+            }
+            className="w-full h-16 rounded-2xl bg-white dark:bg-muted-800 border border-muted-200 dark:border-muted-700"
+          />
+        </Animated.View>
+
+        {/* Sign In Button */}
+        <Button
+          title="Sign In"
+          className="w-full bg-muted-800 dark:bg-muted-200"
+          onPress={handleSignIn}
         />
+
+        {/* Sign In Redirect */}
+        <Link href="/sign-up" asChild>
+          <Text className="mt-4 font-poppins text-sm text-muted-500 dark:text-muted-400">
+            Don&apos;t have an account?
+            <Text className="underline"> SignUp</Text>
+          </Text>
+        </Link>
+
+        {/* Separator */}
+        <View className="w-full flex-row items-center justify-center gap-3 my-6">
+          <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
+          <Text className="text-sm text-muted-500 dark:text-muted-400 font-poppinsLight">
+            or
+          </Text>
+          <View className="flex-1 h-[1px] bg-muted-300 dark:bg-muted-700" />
+        </View>
+
+        <View className="flex-row w-full justify-center gap-4">
+          <OAuthButton
+            iconName="google"
+            onPress={() => handleOAuth("google")}
+          />
+          <OAuthButton
+            iconName="github"
+            onPress={() => handleOAuth("github")}
+          />
+          <OAuthButton
+            iconName="facebook"
+            onPress={() => handleOAuth("facebook")}
+          />
+        </View>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
