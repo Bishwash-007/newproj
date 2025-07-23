@@ -63,8 +63,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await axiosInstance.post("/auth/login", { email, password });
+      const res = await axiosInstance.post("/users/login", { email, password });
       const { token, user } = res.data;
+      console.log(res);
+      
       await storeToken(token);
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (err: any) {
@@ -78,12 +80,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (fullName, email, password, phoneNumber) => {
     set({ isLoading: true, error: null });
     try {
-      await axiosInstance.post("/auth/register", {
+      const res = await axiosInstance.post("/users/register", {
         name: fullName,
         email: email,
         password: password,
         phoneNumber: phoneNumber,
       });
+
+      console.log(res.data);
+      console.log(res.headers);
+      console.log(res.statusText);
+      console.log(res.config);
+      
+
       set({ isLoading: false });
     } catch (err: any) {
       set({
@@ -96,9 +105,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   verifyOtp: async (email, otp) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await axiosInstance.post("/auth/verify-otp", { email, otp });
+      const res = await axiosInstance.post("/users/verify-otp", { email, otp });
       const { token, user } = res.data;
-
       await storeToken(token);
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (err: any) {
