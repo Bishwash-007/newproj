@@ -70,10 +70,10 @@ const SignIn = () => {
 
   return (
     <Animated.View
-      className="flex-1 h-full px-6 bg-white dark:bg-black"
+      className="h-full px-6 bg-white dark:bg-black"
       style={[animatedStyles]}
     >
-      <View className="flex-1 w-full px-6 justify-center items-center bg-muted-50 dark:bg-black">
+      <View className="flex-1 w-full px-6 justify-center items-center bg-white-50 dark:bg-black">
         <Text className="font-poppinsSemibold text-3xl text-muted-800 dark:text-muted-100 mb-8 text-center">
           Sign In
         </Text>

@@ -81,7 +81,7 @@ const VerifyOtp = () => {
       <View className="pt-8">
         <Text className="font-poppinsSemibold text-2xl">Verification Code</Text>
         <Text className="font-poppins text-muted-800 mt-1">
-          We've sent an OTP to{" "}
+          We&apos;ve sent an OTP to{" "}
           <Text className="font-poppinsSemibold">{email || "your email"}</Text>
         </Text>
       </View>
@@ -110,7 +110,7 @@ const VerifyOtp = () => {
 
       <View className="flex-col justify-between mt-10">
         <Text className="font-poppins text-muted-800">
-          Didn't receive the OTP?
+          Didn&apos;t receive the OTP?
         </Text>
         <TouchableOpacity onPress={handleResend}>
           <Text className="font-poppins text-blue-600 underline">

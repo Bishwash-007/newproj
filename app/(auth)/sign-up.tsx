@@ -107,7 +107,7 @@ const SignUp = () => {
       className={"flex-1 h-full px-6 bg-white dark:bg-black"}
       style={[animatedStyles]}
     >
-      <View className="flex-1 justify-center items-center py-8 px-6">
+      <View className="flex-1 justify-center items-center py-8 px-6 bg-white dark:bg-black">
         <Text className="font-poppinsSemibold text-3xl text-muted-800 dark:text-muted-100 mb-8 text-center">
           {"Sign Up"}
         </Text>

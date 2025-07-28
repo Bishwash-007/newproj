@@ -1,5 +1,5 @@
 import { Redirect } from "expo-router";
-import { Text, View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { useAuthStore } from "@/hooks/useAuthStore";
 import { useEffect } from "react";
 
@@ -8,9 +8,9 @@ export default function Index() {
 
   useEffect(() => {
     fetchCurrentUser();
-  }, []);
+  });
 
-  if (isLoading) {
+  if (!isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
         <ActivityIndicator size="large" color="#3b82f6" />
